@@ -8,6 +8,10 @@ HydroShare currently uses [Crossref](https://www.crossref.org/) to register DOIs
 
 This repository was created to document HydroShare's deposit metadata implementation, and may be changed depending on HydroShare's use of DOI registration system.
 
+## Driving Use Case
+
+The use case that drives HydroShare's practice and efforts to accurately map HydroShare's metadata to the Crossref deposit metadata schema is related to other systems accessing the deposit metadata for a registered DOI. For example, many invetigators with grants from the National Science Foundation (NSF) wish to register published datasets with NSF's Public Access Repository (NSF-PAR) so that those resources can be included in the investigator's annual or final report to NSF. NSF-PAR has the capability to automatically retrieve metadata for a given a DOI, but only if deposit metadata for that DOI exists within the system in which the DOI is registered. 
+
 ## Repository Contents
 
 This repository contains:
