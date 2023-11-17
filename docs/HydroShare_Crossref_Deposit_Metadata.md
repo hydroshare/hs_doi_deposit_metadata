@@ -76,15 +76,44 @@ Based on the above requirements, recommendations from Crossref, availability of 
 
 In the sections that follow, each of the elements that will be included in HydroShare's deposit metadata for Crossref DOI registration are described, including additional required Crossref elements that give structure to the deposit metadata but are not specifically included in the list above (e.g., `doi_batch`). Each deposit XML document created by HydroShare for deposit into Crossref when registering a DOI should have the following elements.
 
+### Order of Metadata Elements
+
+The Crossref metadata schema specifies metadata elements in a sequence. So, the order in which the metadata elements appear in the deposit metadata file matters. The following is the overall structure that is required, and the sections that follow are written in the order that they should appear in the file.
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<doi_batch>
+  <head>...</head>
+  <body>
+    <database>
+      <database_metadata>
+        <titles>...</titles>
+        <publisher>...</publisher>
+      </database_metadata>
+      <dataset>
+        <contributors>...</contributors>
+        <titles>...</titles>
+        <database_date>...</database_date>
+        <description>...</description>
+        <fr:program name="fundref">...</fr:program>
+        <ai:program name="AccessIndicators">...</ai:program>
+        <doi_data>...</doi_data>
+      </dataset>
+    </database>
+  </body>
+</doi_batch>
+```
+
 ### DOI Batch
 
-The `doi_batch` element references the Crossref metadata schema version that is used in the markup. We should be using version 5.3.1 of the schema. Since we will include funding agency information, we also need to include the fundref.xsd schema that is used by Crossref in the schema documentation.
+The `doi_batch` element references the Crossref metadata schema version that is used in the markup. We should be using version 5.3.1 of the schema. Since we will include funding agency information, we also need to include the fundref.xsd schema that is used by Crossref in the schema documentation. Last, we need the Access Indicators schema so we can include license information.
 
 ```xml
 <doi_batch
 	xmlns="http://www.crossref.org/schema/5.3.1"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="5.3.1" xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 http://www.crossref.org/schemas/crossref5.3.1.xsd"
-	xmlns:fr="http://www.crossref.org/fundref.xsd">
+	xmlns:fr="http://www.crossref.org/fundref.xsd"
+	xmlns:ai="http://www.crossref.org/AccessIndicators.xsd">
 </doi_batch>
 ```
 
@@ -93,7 +122,7 @@ The `doi_batch` element references the Crossref metadata schema version that is 
 The `head` element includes the following sub-elements: 
 * `doi_batch_id`: a unique identifier for the batch of DOIs to be registered. HydroShare currently uses the resource ID for this field.
 * `timestamp`: The time at which the deposit metadata was created with second resolution. 
-* `depositor`: The `depositor_name` and `email_address` of the depositor. I suggest we use "CUAHSI" for `depositor_name` and `help@cuahsi.org` as the `email_address`. This is consistent with what HydroShare is doing now.
+* `depositor`: The `depositor_name` and `email_address` of the depositor. I suggest we use "CUAHSI" for `depositor_name` and help@cuahsi.org as the `email_address`. This is consistent with what HydroShare is doing now.
 *  `registrant`: The name of the registrant - "Consortium of Universities for the Advancement of Hydrologic Science, Inc. (CUAHSI)" consistent with what HydroShare is doing now.
 
 ```xml
@@ -110,14 +139,15 @@ The `head` element includes the following sub-elements:
 
 ### Body
 
-The `body` element contains the main content of the deposit metadata. It contains several sub-elements, including `database`, which contains database-level metadata and then `dataset`, which contains dataset-level metadata. `database` is a container for all information about a set of datasets. For an individual HydroShare resource, we should nest a single `dataset` element within a `database` element. 
+The `body` element contains the main content of the deposit metadata. It contains several sub-elements, including `database`, which contains database-level metadata and then `dataset`, which contains dataset-level metadata. `database` is a container for all information about a set of datasets. For an individual HydroShare resource, we should nest a single `dataset` element within a `database` element when registering a DOI. 
 
-Crossref allows the `dataset_type` attribute of the `dataset` to be set as `record` or `collection` to indicate the type of deposit. The default attribute is `record` and should be used for registering DOIs for all HydroShare resources besides collection resources. For HydroShare collection resources, the value of this attribute should be set to "collection".
+Crossref allows the `dataset_type` attribute of the `dataset` to be set as `record` or `collection` to indicate the type of deposit. The default attribute is `record` and should be used for registering DOIs for all HydroShare resources besides collection resources. For HydroShare collection resources, the value of this attribute should be set to `collection`.
 
 For a regular HydroShare resource:
 ```xml
 <body>
   <database>
+    ...
     <dataset dataset_type="record">...</dataset>
   </database>
 </body>
@@ -128,6 +158,7 @@ For a HydroShare collection resource:
 ```xml
 <body>
   <database>
+    ...
     <dataset dataset_type="collection">...</dataset>
   </database>
 </body>
@@ -137,17 +168,19 @@ For a HydroShare collection resource:
 
 The `database` element is a container for information about a set of datasets. It can also include some database level metadata elements. Here we will include only those database level elements that are required by Crossref because the rest of the metadata will be specified at the `dataset` level. Required elements include:
 * `titles`: Use the string "HydroShare Resource" 
-* `publisher`: Use the string "HydroShare"
+* `publisher`: Use the string "HydroShare" within the `publisher_name` element.
 
 ```xml
 <body>
-    <database>
-      <database_metadata language="en">
-        <titles>
-          <title>HydroShare Resource</title>
-        </titles>
-        <publisher>HydroShare</publisher>
-      </database_metadata>
+  <database>
+    <database_metadata language="en">
+      <titles>
+        <title>HydroShare Resource</title>
+      </titles>
+      <publisher>
+        <publisher_name>HydroShare</publisher_name>
+      </publisher>
+    </database_metadata>
     <dataset dataset_type="record">...</dataset>
   </database>
 </body>
@@ -156,36 +189,26 @@ The `database` element is a container for information about a set of datasets. I
 ### Dataset
 
 The `dataset` element contains dataset-level metadata about the HydroShare resource. This will include:
-* `titles`: The title of the HydroShare resource.
 * `contributors`: Information about the authors/creators of the HydroShare resource.
+* `titles`: The title of the HydroShare resource.
 * `database_date`: The dates on which the resource was created, modified, and published.
 * `description`: The Abstract of the HydroShare resource.
-* `funding`: Information about the funding agency that funded the work that resulted in creation of the resource.
-* `license`: Information about the license under which the resource is released.
+* `fr:program name="fundref"` for funding information: Information about the funding agency that funded the work that resulted in creation of the resource.
+* `ai:program name="AccessIndicators"` for license information: Information about the license under which the resource is released.
 * * `doi_data`: This is the data that will be used to register the DOI for the resource, including the DOI and the URL to which it should point.
 
 ```xml
 <dataset dataset_type="record">
-  <titles>...</titles>
   <contributors>...</contributors>
-  <description>...</description>
+  <titles>...</titles>
   <database_date>...</database_date>
-  <funding>...</funding>
-  <license>...</license>
+  <description>...</description>
+  <fr:program name="fundref">...</fr:program>
+  <ai:program name="AccessIndicators">...</ai:program>
   <doi_data>...</doi_data>
 </dataset>
 ```
 In the sections below we describe each of the sub-elements of the `Dataset` element.
-
-#### titles
-
-The HydroShare resource title will be contained within the `titles` element. It is encoded as follows:
-
-```xml
-<titles>
-  <title>Supporting data and tools for "Impact of data temporal resolution on quantifying residential end uses of water"</title>
-</titles>
-```
 
 #### contributors
 The `contributors` element is a container for all of the people who contributed to authoring or editing a resource. For HydroShare resources, we will limit this to the Authors/Creators of the resource. Contributors can be specified using a `person_name` element for each author/creator of the resource. The name of the resource author/creator can also have multiple attributes. We will include `contributor_role`, which is the role that the author/creator played. This comes from an enumeration and should be set to "author". We will also use `sequence`, which is the sequence order of the author/creator. This also comes from an enumeration and should be set to "first" for the first author and "additional" for the other authors. Those are the only two options. Each `person_name` element can include a `given_name` and `surname`. They can also include `affiliations`, `suffix`, `alt-name`, and `ORCID`. Best practice is to provide ORCID if it exists in the author/creator information for the resource. 
@@ -194,16 +217,16 @@ I suggest that we do not try to manage `affiliations` for people in the deposit 
 
 ```xml
 <contributors>
-  <person_name contributor_role="author" seqence="first">
+  <person_name contributor_role="author" sequence="first">
     <given_name>Camilo</given_name>
     <surname>Bastidas Pacheco</surname>
   </person_name>
-  <person_name contributor_role="author" seqence="additional">
+  <person_name contributor_role="author" sequence="additional">
     <given_name>Jeffery</given_name>
     <surname>Horsburgh</surname>
     <ORCID>https://orcid.org/0000-0002-0768-3196</ORCID>
   </person_name>
-  <person_name contributor_role="author" seqence="additional">
+  <person_name contributor_role="author" sequence="additional">
     <given_name>Arle</given_name>
     <surname>Beckwith</surname>
   </person_name>
@@ -214,15 +237,18 @@ I suggest that we do not try to manage `affiliations` for people in the deposit 
 
 ```xml
 <contributors>
-  <organization contributor_role="author" seqence="first">Utah Water Research Laboratory</organization>
+  <organization contributor_role="author" sequence="first">Utah Water Research Laboratory</organization>
 </contributors>
 ```
 
-#### description
-The `description` element contains a narrative description of the resource. We will use the HydroShare abstract description for this element. The description element can support markup if done correctly. Need to make sure that any special characters are encoded correctly in the abstract.
+#### titles
+
+The HydroShare resource title will be contained within the `titles` element. It is encoded as follows:
 
 ```xml
-<description>The files provided here are the supporting data and code files for the analyses presented in "Impact of data temporal resolution on quantifying residential end uses of water", an article submitted to the Water journal https://www.mdpi.com/journal/water. The journal paper assessed how the temporal resolution at which water use data are collected impacts our ability to identify water end use events, calculate features of individual events, and classify events by end use. Additionally, we also explored implications for data management associated with collecting this type of data as well as methods and tools for analyzing and extracting information from it. The data were collected in the cities of Logan and Providence, Utah, USA in 2022 and are included in this resource. The code and data included in this resource allow replication of the analyses presented in the journal paper, and the raw data included allow for extension of the analyses conducted.</description>
+<titles>
+  <title>Supporting data and tools for "Impact of data temporal resolution on quantifying residential end uses of water"</title>
+</titles>
 ```
 
 #### database_date
@@ -250,7 +276,14 @@ Crossref's schema wants dates separated out into month, day, and year elements, 
 </database_date>
 ```
 
-#### funding
+#### description
+The `description` element contains a narrative description of the resource. We will use the HydroShare abstract description for this element. The description element can support markup if done correctly. Need to make sure that any special characters are encoded correctly in the abstract.
+
+```xml
+<description>The files provided here are the supporting data and code files for the analyses presented in "Impact of data temporal resolution on quantifying residential end uses of water", an article submitted to the Water journal https://www.mdpi.com/journal/water. The journal paper assessed how the temporal resolution at which water use data are collected impacts our ability to identify water end use events, calculate features of individual events, and classify events by end use. Additionally, we also explored implications for data management associated with collecting this type of data as well as methods and tools for analyzing and extracting information from it. The data were collected in the cities of Logan and Providence, Utah, USA in 2022 and are included in this resource. The code and data included in this resource allow replication of the analyses presented in the journal paper, and the raw data included allow for extension of the analyses conducted.</description>
+```
+
+#### Funding information
 An overview of information relevant to encoding funding information is available [here](https://www.crossref.org/documentation/funder-registry/funding-data-overview/). According to Crossref's documentation, funding metadata for Crossref **must** include the name of the funding organization **and** the funder identifier (where the funding organization is listed in the Open Funder Registry), and should include an award/grant number or grant identifier. Funder names should **only** be deposited without the accompanying ID if the funder is not found in the Open Funder Registry. While Crossref members can deposit the funder name without the identifier, those records will not be considered valid until such a time as the funder is added to the databae and they are redeposited (updated) with an ID. What the means is that they will not be found using the filters on funding information that Crossref supports via their REST API, or show up in Crossref's Open Funder Registry search. 
 
 So, HydroShare needs to do the following:
@@ -267,7 +300,7 @@ Correct nesting of funder names and Open Funder Registry IDs is essential. Examp
   <fr:assertion name="funder_name">National Science Foundation
     <fr:assertion name="funder_identifier">https://doi.org/10.13039/100000001</fr:assertion>
   </fr:assertion>
-  </fr:assertion name="award_number">1552444</fr:assertion>
+  <fr:assertion name="award_number">1552444</fr:assertion>
 </fr:program>
 ```
 Where there is more than one funding agency, each funder should be included within a `fundgroup`:
@@ -279,7 +312,7 @@ Where there is more than one funding agency, each funder should be included with
     <fr:assertion name="funder_name">National Science Foundation
       <fr:assertion name="funder_identifier">https://doi.org/10.13039/100000001</fr:assertion>
     </fr:assertion>
-    </fr:assertion name="award_number">1552444</fr:assertion>
+    <fr:assertion name="award_number">1552444</fr:assertion>
   </fr:assertion>
   <fr:assertion name="fundgroup">
     <fr:assertion name="funder_name">Utah Water Research Laboratory</fr:assertion>
@@ -292,7 +325,7 @@ For additional examples of how to encode funding information, see [this page](ht
 * If the funder name cannot be matched in the Open Funder Registry, you may submit  `funder_name`  only, and the funding body will be reviewed and considered for addition to the official Registry. Until it is added to the Registry, the deposit will not be considered a valid funding record and will not appear in funding search or the REST API.
 * Items with several award numbers associated with a single funding organization should be grouped together by enclosing the `funder_name`, `funder_identifier`, and `award_number(s)` within a `fundgroup` assertion.
 
-#### license
+#### License information
 Including license information is important for prospective users to know how the published resource can be used. In Crossref, a license can be specified for an accepted manuscript (AAM), the version of record (VoR), or a version intended for text and data mining using the `applies_to` attribute - e.g., a resource can have multiple license elements. Given that published HydroShare resources are the version of record (VoR), we will use one license element in the deposit metadata and will specify that it is for the version of record. Each license element can contain a URL to a license description, the article version to which the license applies, and the license start date.
 
 Given that Crossref only allows encoding of a URL for the license, the license element should only be included in the deposit metadata if the published HydroShare resource has a license URL. The URL for license is not required in HydroShare if a user chooses to designate a custom license, but if the user selects one of the standard HydroShare licenses, the URL will be populated. It does not appear that NSF-PAR would import license information.
@@ -300,9 +333,9 @@ Given that Crossref only allows encoding of a URL for the license, the license e
 The `start_date` attribute for the license should be specified as the date on which the resource was published from the resource's metadata.
  
 ```xml
-<license_ref applies_to="vor" start_date="2022-07-08">
-    http://creativecommons.org/licenses/by/4.0/
-</license_ref>
+<ai:program name="AccessIndicators">
+    <ai:license_ref applies_to="vor" start_date="2022-07-08">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+</ai:program>
 ```
 
 #### doi_data

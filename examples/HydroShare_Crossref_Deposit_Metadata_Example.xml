@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<doi_batch version="5.3.1"
+	xmlns="http://www.crossref.org/schema/5.3.1"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  xsi:schemaLocation="http://www.crossref.org/schema/5.3.1 https://data.crossref.org/schemas/crossref5.3.1.xsd"
+	xmlns:fr="http://www.crossref.org/fundref.xsd"
+	xmlns:ai="http://www.crossref.org/AccessIndicators.xsd"
+>
+  <head>
+    <doi_batch_id>6625bdbde41c45c2b906f32be7ea70f0</doi_batch_id>
+    <timestamp>20231114135731</timestamp>
+    <depositor>
+      <depositor_name>CUAHSI</depositor_name>
+      <email_address>help@cuahsi.org</email_address>
+    </depositor>
+    <registrant>Consortium of Universities for the Advancement of Hydrologic Science, Inc. (CUAHSI)</registrant>
+  </head>
+  <body>
+    <database>
+      <database_metadata language="en">
+        <titles>
+          <title>HydroShare Resource</title>
+        </titles>
+        <publisher>
+          <publisher_name>HydroShare</publisher_name>
+        </publisher>
+      </database_metadata>
+      <dataset dataset_type="record">
+        <contributors>
+          <person_name contributor_role="author" sequence="first">
+            <given_name>Camilo</given_name>
+            <surname>Bastidas Pacheco</surname>
+          </person_name>
+          <person_name contributor_role="author" sequence="additional">
+            <given_name>Jeffery</given_name>
+            <surname>Horsburgh</surname>
+            <ORCID>https://orcid.org/0000-0002-0768-3196</ORCID>
+          </person_name>
+          <person_name contributor_role="author" sequence="additional">
+            <given_name>Arle</given_name>
+            <surname>Beckwith</surname>
+          </person_name>
+        </contributors>
+        <titles>
+          <title>Supporting data and tools for "Impact of data temporal resolution on quantifying residential end uses of water"</title>
+        </titles>
+        <database_date>
+          <creation_date>
+            <month>04</month>
+            <day>19</day>
+            <year>2022</year>
+          </creation_date>
+          <publication_date>
+            <month>07</month>
+            <day>08</day>
+            <year>2022</year>
+          </publication_date>
+          <update_date>
+            <month>07</month>
+            <day>08</day>
+            <year>2022</year>
+          </update_date>
+        </database_date>
+        <description>The files provided here are the supporting data and code files for the analyses presented in "Impact of data temporal resolution on quantifying residential end uses of water", an article submitted to the Water journal https://www.mdpi.com/journal/water. The journal paper assessed how the temporal resolution at which water use data are collected impacts our ability to identify water end use events, calculate features of individual events, and classify events by end use. Additionally, we also explored implications for data management associated with collecting this type of data as well as methods and tools for analyzing and extracting information from it. The data were collected in the cities of Logan and Providence, Utah, USA in 2022 and are included in this resource. The code and data included in this resource allow replication of the analyses presented in the journal paper, and the raw data included allow for extension of the analyses conducted.</description>
+        <fr:program name="fundref">
+          <fr:assertion name="fundgroup">
+            <fr:assertion name="funder_name">National Science Foundation
+              <fr:assertion name="funder_identifier">https://doi.org/10.13039/100000001</fr:assertion>
+            </fr:assertion>
+            <fr:assertion name="award_number">1552444</fr:assertion>
+          </fr:assertion>
+          <fr:assertion name="fundgroup">
+            <fr:assertion name="funder_name">Utah Water Research Laboratory</fr:assertion>
+          </fr:assertion>
+        </fr:program>
+        <ai:program name="AccessIndicators">
+          <ai:license_ref applies_to="vor" start_date="2022-07-08">http://creativecommons.org/licenses/by/4.0/</ai:license_ref>
+        </ai:program>
+        <doi_data>
+          <doi>10.4211/hs.6625bdbde41c45c2b906f32be7ea70f0</doi>
+          <resource>https://www.hydroshare.org/resource/6625bdbde41c45c2b906f32be7ea70f0/</resource>
+        </doi_data>
+      </dataset>
+    </database>
+  </body>
+</doi_batch>
