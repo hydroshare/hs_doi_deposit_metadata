@@ -16,8 +16,8 @@ The use case that drives HydroShare's practice and efforts to accurately map Hyd
 
 This repository contains:
 
-* Docs: A folder containing documentation of HydroShare's deposit metadata implementation
-* Examples: A folder containing example deposit metadata encodings
+* [Docs](https://github.com/hydroshare/hs_doi_deposit_metadata/tree/main/docs): A folder containing documentation of HydroShare's deposit metadata implementation
+* [Examples](https://github.com/hydroshare/hs_doi_deposit_metadata/tree/main/examples): A folder containing example deposit metadata encodings
 
 ## Sponsors and Credits
 
